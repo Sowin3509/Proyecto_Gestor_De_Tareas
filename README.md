@@ -111,4 +111,7 @@ Casos de Prueba - Gestión de Tareas
 | 53       | Categoría: `"A" * 256`                                                     | Obtener tareas con categoría demasiado larga.                               | Debe fallar porque la categoría excede el límite de caracteres.                     | Falla intencionalmente.                                                                |
 | 54       | Usuario: `"usuario_inexistente"`                                           | Obtener tareas de un usuario inexistente.                                   | Debe fallar porque el usuario no existe.                                           | Falla intencionalmente.                                                                |
 
+
+DIAGRAMA DE CLASES 
+
 ![alt text](image.png)
