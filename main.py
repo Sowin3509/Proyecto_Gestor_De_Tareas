@@ -77,7 +77,7 @@ def menu(usuario, gestor):
 
         elif opcion == "6":
             print("Saliendo del programa.")
-            break
+
         else:
             print("Opción inválida, intenta de nuevo.")
 

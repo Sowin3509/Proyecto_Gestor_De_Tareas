@@ -3,6 +3,17 @@ from database.conexion import ConexionDB
 from models.tarea import Tarea
 
 class GestorTareas:
+    def __init__(self, db_path="tareas.db"):
+        self.conexion = sqlite3.connect(db_path)
+        self.cursor = self.conexion.cursor()
+
+    def limpiar_tareas(self):
+        """Elimina todas las tareas de la base de datos"""
+        self.cursor.execute("DELETE FROM tareas")  # Borra todas las tareas
+        self.conexion.commit()
+
+
+class GestorTareas:
     def __init__(self):
         self.db = ConexionDB()  # Crear una instancia de ConexionDB
         self.usuarios = []  # Inicializar la lista de usuarios
@@ -78,3 +89,6 @@ class GestorTareas:
 
     def __del__(self):
         self.db.cerrar()  # Cerrar la conexión a la base de datos
+
+    def obtener_todas_las_tareas(self):
+        return self.tareas  # Asumiendo que `tareas` es la lista donde se almacenan
