@@ -4,6 +4,7 @@ from models.tarea import Tarea
 from services.gestor_tareas import GestorTareas, Tarea
 
 # 54 pruebas con fallos intencionales
+@pytest.fixture
 
 def test_agregar_tarea_1():
     gestor = GestorTareas()
@@ -92,8 +93,6 @@ def test_agregar_tarea_con_id_duplicado_16(gestor):
     with pytest.raises(ValueError):
         gestor.agregar_tarea(tarea2)
 
-@pytest.fixture
-
 def test_actualizar_tarea_con_estado_no_permitido_17(gestor):
     tarea = Tarea(1, "usuario1", "Hacer ejercicio", "Salud")
     gestor.agregar_tarea(tarea)
@@ -145,3 +144,104 @@ def test_agregar_tarea_con_categoria_vacia_26(gestor):
     tarea = Tarea(7, "usuario2", "Hacer café", "")
     with pytest.raises(ValueError):
         gestor.agregar_tarea(tarea)  # Categoría no puede estar vacía
+
+def test_agregar_tarea_con_texto_muy_largo_27(gestor):
+    texto_largo = "A" * 1001  # Más de 1000 caracteres
+    tarea = Tarea(8, "usuario1", texto_largo, "Personal")
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(tarea)  # No debe permitir descripciones muy largas
+
+def test_eliminar_tarea_ya_eliminada_28(gestor):
+    gestor.eliminar_tarea(1)  # Eliminar tarea con ID 1
+    with pytest.raises(KeyError):
+        gestor.eliminar_tarea(1)  # Intentar eliminarla de nuevo
+
+def test_agregar_tarea_con_estado_no_valido_29(gestor):
+    tarea = Tarea(9, "usuario2", "Leer un libro", "Educación")
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(tarea, estado="En progreso")  # Estado no definido
+
+def test_obtener_tareas_usuario_inexistente_30(gestor):
+    with pytest.raises(KeyError):
+        gestor.obtener_tareas_usuario("usuario_no_existente")  # Usuario no registrado
+
+def test_actualizar_tarea_con_estado_vacio_31(gestor):
+    with pytest.raises(ValueError):
+        gestor.actualizar_tarea(2, estado="")  # Estado no puede estar vacío
+
+def test_agregar_tarea_con_id_negativo_32(gestor):
+    tarea = Tarea(-1, "usuario3", "Comprar frutas", "Compras")
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(tarea)  # No debe permitir IDs negativos
+
+def test_actualizar_tarea_con_categoria_invalida_33(gestor):
+    with pytest.raises(ValueError):
+        gestor.actualizar_tarea(3, categoria="Entretenimiento")  # Categoría inexistente
+
+def test_eliminar_tarea_con_id_no_numerico_34(gestor):
+    with pytest.raises(TypeError):
+        gestor.eliminar_tarea("dos")  # ID de tarea debe ser un número
+
+def test_agregar_tarea_con_usuario_vacio_35(gestor):
+    tarea = Tarea(10, "", "Llamar al banco", "Finanzas")
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(tarea)  # Usuario no puede estar vacío
+
+def test_obtener_tareas_cuando_no_hay_tareas_36(gestor):
+    gestor.limpiar_almacen()  # Vacía la lista de tareas
+    assert gestor.obtener_todas_las_tareas() == []  # Debe devolver una lista vacía
+
+def test_agregar_tarea_con_texto_extremadamente_largo_42(gestor):
+    texto_largo = "A" * 1001  # Suponiendo que el límite es 1000 caracteres
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(Tarea(13, "usuario6", texto_largo, "Personal"))
+
+def test_eliminar_tarea_con_id_negativo_43(gestor):
+    with pytest.raises(ValueError):
+        gestor.eliminar_tarea(-5)  # No debería permitir IDs negativos
+
+def test_actualizar_tarea_de_otro_usuario_44(gestor):
+    with pytest.raises(PermissionError):
+        gestor.actualizar_tarea(3, texto="Nuevo texto", usuario="usuario_diferente")
+
+def test_obtener_tareas_con_categoria_invalida_45(gestor):
+    with pytest.raises(ValueError):
+        gestor.obtener_tareas_categoria("Categoría inexistente")
+
+def test_listar_tareas_ordenadas_por_fecha_invalida_46(gestor):
+    with pytest.raises(ValueError):
+        gestor.listar_tareas_ordenadas(criterio="fecha_inexistente")
+
+def test_agregar_tarea_sin_usuario_47(gestor):
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(Tarea(14, None, "Hacer ejercicio", "Salud"))
+
+def test_eliminar_tarea_no_existente_48(gestor):
+    with pytest.raises(KeyError):
+        gestor.eliminar_tarea(9999)  # Suponiendo que la tarea con ID 9999 no existe
+
+def test_actualizar_tarea_con_usuario_vacio_49(gestor):
+    with pytest.raises(ValueError):
+        gestor.actualizar_tarea(3, texto="Nuevo texto", usuario="")
+
+def test_obtener_tareas_por_usuario_inexistente_50(gestor):
+    with pytest.raises(KeyError):
+        gestor.obtener_tareas_usuario("usuario_inexistente")
+
+def test_agregar_tarea_con_id_repetido_51(gestor):
+    gestor.agregar_tarea(Tarea(15, "usuario7", "Ir al médico", "Salud"))
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(Tarea(15, "usuario8", "Leer un libro", "Educación"))  # ID duplicado
+
+def test_actualizar_tarea_con_id_inexistente_52(gestor):
+    with pytest.raises(KeyError):
+        gestor.actualizar_tarea(999, texto="Texto nuevo")  # ID inexistente
+
+def test_eliminar_tarea_con_caracteres_especiales_53(gestor):
+    with pytest.raises(TypeError):
+        gestor.eliminar_tarea("!@#$%^")  # ID con caracteres no válidos
+
+def test_agregar_tarea_con_categoria_demasiado_larga_54(gestor):
+    categoria_larga = "A" * 256  # Suponiendo que el límite es 255 caracteres
+    with pytest.raises(ValueError):
+        gestor.agregar_tarea(Tarea(16, "usuario9", "Revisar informes", categoria_larga))
