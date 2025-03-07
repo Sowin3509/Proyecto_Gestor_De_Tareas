@@ -15,7 +15,6 @@ un usuario ya existente
 6. Cambiar contraseña: El sistema debe permitir a los usuarios cambiar sus contraseñas
 cuando ellos lo deseen. 
 
-Casos de Prueba - Gestión de Tareas
 
 ### **Casos de Prueba - Gestión de Tareas**
 
