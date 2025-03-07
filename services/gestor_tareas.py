@@ -73,7 +73,6 @@ class GestorTareas:
         """, (usuario,))
         return cursor.fetchall()
 
-    def actualizar_tarea(self, id_tarea, nuevo_estado):
         cursor = self.db.cursor  # Acceder al cursor de la base de datos
         cursor.execute("""
             UPDATE tareas SET estado = ? WHERE id = ?
