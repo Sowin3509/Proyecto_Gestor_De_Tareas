@@ -1,7 +1,10 @@
 import pytest
 from services.gestor_tareas import GestorTareas
 from models.tarea import Tarea
-from services.gestor_tareas import GestorTareas, Tarea
+from exceptions.custom_exceptions import (
+    DescripcionVaciaError, TareaNoEncontradaError, UsuarioSinTareasError,
+    IDInvalidoError, CategoriaInvalidaError
+)
 
 # 54 pruebas con fallos intencionales
 @pytest.fixture

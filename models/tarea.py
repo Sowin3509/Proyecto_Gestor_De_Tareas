@@ -1,7 +1,6 @@
 class Tarea:
-    def __init__(self, id_tarea, usuario, texto, categoria, estado="Por hacer"):
-        self.id_tarea = id_tarea
+    def __init__(self, id_tarea, usuario, descripcion, categoria):
+        self.id = id_tarea
         self.usuario = usuario
-        self.texto = texto
+        self.descripcion = descripcion
         self.categoria = categoria
-        self.estado = estado
