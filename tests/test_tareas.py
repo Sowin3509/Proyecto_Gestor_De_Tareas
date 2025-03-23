@@ -70,7 +70,6 @@ def test_agregar_tarea_con_usuario_espacios(gestor):
     with pytest.raises(ValueError):
         gestor.agregar_tarea("    ", "Revisar agenda", "personal")
 
-# --- 32 nuevos tests basados en los anteriores, asegurando que pasen ---
 def test_actualizar_tarea_correctamente(gestor):
     gestor.agregar_tarea("usuario1", "Actualizar perfil", "trabajo")
     gestor.actualizar_tarea(1, "Perfil actualizado")
@@ -138,9 +137,6 @@ def test_obtener_tareas_de_usuario_diferente(gestor):
     gestor.agregar_tarea("usuario1", "Tarea de usuario1", "trabajo")
     gestor.agregar_tarea("usuario2", "Tarea de usuario2", "personal")
     assert len(gestor.obtener_tareas_usuario("usuario2")) == 1
-
-# Más pruebas similares hasta completar 54...
-
 
 def test_actualizar_tarea_con_texto_largo(gestor):
     gestor.agregar_tarea("usuario1", "Resumen del proyecto", "trabajo")
@@ -279,8 +275,6 @@ def test_agregar_y_actualizar_tarea_varias_veces(gestor):
     gestor.actualizar_tarea(1, "Informe finalizado")
     tareas = gestor.obtener_tareas_usuario("usuario1")
     assert any(t.descripcion == "Informe finalizado" for t in tareas)
-
-
 
 def test_agregar_tarea_y_verificar_texto_con_numeros(gestor):
     gestor.agregar_tarea("usuario1", "Reporte 2025", "trabajo")
