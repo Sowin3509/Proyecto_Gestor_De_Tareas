@@ -1,5 +1,5 @@
 
-from exceptions.custom_exceptions import (
+from exceptions.exceptions import (
     DescripcionVaciaError, TareaNoEncontradaError, UsuarioSinTareasError,
     IDInvalidoError, CategoriaInvalidaError
 )
