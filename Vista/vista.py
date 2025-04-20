@@ -105,3 +105,84 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = AppGUI(root)
     root.mainloop()
+
+
+"""
+Módulo de interfaz gráfica (GUI) para el Gestor de Tareas
+
+Implementa una interfaz visual usando Tkinter que permite:
+- Registro y autenticación de usuarios
+- Gestión completa de tareas (CRUD)
+- Navegación entre diferentes pantallas/menús
+
+Arquitectura:
+------------
+- AppGUI: Clase principal que maneja:
+  * Configuración de la ventana principal
+  * Navegación entre pantallas
+  * Gestión del estado de la aplicación
+  * Coordinación con el GestorTareas
+
+Componentes principales:
+----------------------
+- Sistema de autenticación:
+  * Registro de nuevos usuarios
+  * Inicio/cierre de sesión
+  * Persistencia de usuarios en memoria
+
+- Gestión de tareas:
+  * Creación con validación de categorías
+  * Visualización listada
+  * Eliminación por ID
+
+- Interfaz:
+  * Menú principal (no autenticado)
+  * Menú de usuario (autenticado)
+  * Diálogos modales para operaciones
+  * Mensajes de feedback al usuario
+
+Dependencias:
+------------
+- tkinter: Para todos los componentes visuales
+- services.gestor_tareas: Lógica de negocio de tareas
+- models.usuario: Modelo de datos de usuario
+- exceptions.exceptions: Manejo de errores personalizados
+
+Flujo de trabajo típico:
+----------------------
+1. Inicio -> Muestra menú principal (registro/login)
+2. Registro o inicio de sesión
+3. Menú de usuario con opciones de tareas
+4. Operaciones CRUD mediante diálogos
+5. Cierre de sesión -> Vuelve a menú principal
+
+Manejo de errores:
+-----------------
+- Muestra mensajes amigables para:
+  * Credenciales inválidas
+  * Validación de datos (descripción vacía, categoría inválida)
+  * Operaciones con IDs inexistentes
+  * Usuarios sin tareas
+
+Ejemplo de uso:
+--------------
+>>> python vista.py
+(Muestra la ventana principal del gestor)
+
+Características de la interfaz:
+-----------------------------
+- Diseño minimalista y funcional
+- Navegación intuitiva entre pantallas
+- Validación en tiempo real
+- Feedback visual inmediato
+- Diálogos modales para operaciones
+- Adaptable a diferentes resoluciones
+
+Notas técnicas:
+-------------
+- Estado mantenido en memoria durante la ejecución
+- Separación clara entre vista y lógica de negocio
+- Uso de componentes estándar de Tkinter
+- No requiere instalación adicional (solo Python estándar)
+- Diseño responsive básico
+"""

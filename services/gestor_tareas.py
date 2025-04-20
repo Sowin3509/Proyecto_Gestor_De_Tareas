@@ -47,3 +47,74 @@ class GestorTareas:
             raise DescripcionVaciaError("La nueva descripción no puede estar vacía")
 
         self.tareas[tarea_id].descripcion = nueva_descripcion
+
+
+"""
+Módulo de servicio para la gestión de tareas.
+
+Implementa la lógica de negocio principal para el sistema de gestión de tareas,
+incluyendo operaciones CRUD con validaciones y manejo de errores personalizados.
+
+Clase Principal:
+--------------
+GestorTareas: Gestiona el ciclo de vida completo de las tareas.
+
+Funcionalidades:
+--------------
+- Creación de tareas con validación de datos
+- Eliminación de tareas con verificación de existencia
+- Consulta de tareas por usuario
+- Actualización de descripciones
+- Generación automática de IDs únicos
+
+Atributos:
+---------
+- tareas: Diccionario que almacena las tareas (id -> objeto Tarea)
+- contador_id: Secuencia autoincremental para generación de IDs
+
+Métodos Públicos:
+---------------
+1. agregar_tarea(usuario, descripcion, categoria) -> int
+   - Crea una nueva tarea con validación de inputs
+   - Retorna el ID asignado a la tarea
+
+2. eliminar_tarea(tarea_id) -> None
+   - Elimina una tarea existente por ID
+
+3. obtener_tareas_usuario(usuario) -> List[Tarea]
+   - Devuelve todas las tareas de un usuario específico
+
+4. actualizar_tarea(tarea_id, nueva_descripcion) -> None
+   - Modifica la descripción de una tarea existente
+
+Validaciones:
+------------
+- Usuario no vacío
+- Descripción no vacía
+- Categorías permitidas: ["trabajo", "personal", "estudio"]
+- Existencia de tareas al operar con IDs
+
+Excepciones Personalizadas:
+-------------------------
+- DescripcionVaciaError: Cuando la descripción está vacía
+- TareaNoEncontradaError: Al operar con tareas inexistentes
+- UsuarioSinTareasError: Cuando un usuario no tiene tareas
+- IDInvalidoError: Al actualizar tareas con ID incorrecto
+- CategoriaInvalidaError: Cuando la categoría no es válida
+
+Ejemplo de Uso:
+-------------
+>>> gestor = GestorTareas()
+>>> id_tarea = gestor.agregar_tarea("juan", "Revisar documentación", "trabajo")
+>>> tareas = gestor.obtener_tareas_usuario("juan")
+>>> gestor.actualizar_tarea(id_tarea, "Revisar documentación técnica")
+>>> gestor.eliminar_tarea(id_tarea)
+
+Notas de Implementación:
+----------------------
+- Almacenamiento en memoria (volátil)
+- IDs autoincrementales únicos
+- Thread-safe para operaciones básicas
+- Acoplado a los modelos Tarea y Usuario
+- Independiente del mecanismo de persistencia
+"""

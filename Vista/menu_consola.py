@@ -124,3 +124,72 @@ class AppConsola:
 if __name__ == "__main__":
     app = AppConsola()
     app.ejecutar()
+
+
+"""
+Módulo principal de la aplicación de gestión de tareas en consola.
+
+Este módulo implementa una interfaz de línea de comandos (CLI) interactiva para el
+sistema de gestión de tareas, con autenticación de usuarios y operaciones CRUD.
+
+Estructura:
+----------
+- AppConsola: Clase principal que maneja:
+  * Autenticación de usuarios (registro/login/logout)
+  * Operaciones con tareas (crear/eliminar/listar)
+  * Flujo principal de la aplicación
+
+- Dependencias:
+  * models.usuario: Gestiona la entidad Usuario
+  * services.gestor_tareas: Maneja la lógica de negocio de tareas
+  * exceptions.exceptions: Contiene excepciones personalizadas
+
+Funcionalidades clave:
+---------------------
+✔ Sistema de autenticación con usuarios y contraseñas
+✔ Menú contextual que cambia según estado de sesión
+✔ Gestión completa de tareas (CRUD)
+✔ Manejo de errores con mensajes descriptivos
+✔ Persistencia de datos en memoria (durante ejecución)
+
+Flujo de trabajo:
+----------------
+1. Inicio de aplicación -> Muestra menú principal
+2. Usuario debe registrarse o iniciar sesión
+3. Menú ampliado muestra opciones de gestión de tareas
+4. Operaciones disponibles:
+   - Agregar tareas con categorías específicas
+   - Eliminar tareas por ID
+   - Listar todas las tareas del usuario
+   - Cerrar sesión
+5. Salir del programa
+
+Manejo de errores:
+-----------------
+- DescripcionVaciaError: Validación de descripciones no vacías
+- TareaNoEncontradaError: Al intentar operar con tareas inexistentes
+- UsuarioSinTareasError: Cuando un usuario no tiene tareas registradas
+- CategoriaInvalidaError: Validación de categorías permitidas
+
+Ejemplo de uso:
+--------------
+>>> python app_consola.py
+--- GESTOR DE TAREAS ---
+1. Crear cuenta
+2. Iniciar sesión
+7. Salir
+Selecciona una opción: 1
+🧾 Ingresa un nombre de usuario: prueba
+🔑 Ingresa tu contraseña: ***
+✅ Usuario registrado con éxito.
+
+Notas de implementación:
+----------------------
+- Estado mantenido en memoria durante la ejecución
+- Interfaz intuitiva con emojis visuales
+- Validación de inputs en cada operación
+- Separación clara entre:
+  * Lógica de presentación (esta clase)
+  * Lógica de negocio (gestor_tareas)
+  * Modelos de datos (usuario)
+"""

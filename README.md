@@ -115,7 +115,7 @@ Integrantes: Santiago Calle L - Wilson Manuel Castillo Vergara - Proyecto De Aul
 
 ---
 
-### **Nuevas funcionalidades añadidas en la Entrega 3**
+### **Nuevas funcionalidades añadidas**
 
 1. **Interfaz gráfica (GUI) funcional con Tkinter**:  
    La aplicación cuenta con una GUI amigable que permite al usuario crear cuenta, iniciar sesión y gestionar tareas desde una ventana visual.

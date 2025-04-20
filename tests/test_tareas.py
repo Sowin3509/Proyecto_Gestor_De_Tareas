@@ -246,3 +246,55 @@ def test_agregar_tarea_comb_invalidas(gestor, usuario, descripcion, categoria):
     with pytest.raises(Exception):
         gestor.agregar_tarea(usuario, descripcion, categoria)
 
+
+"""
+Módulo de pruebas unitarias para el gestor de tareas.
+
+Este módulo contiene pruebas unitarias exhaustivas para la clase GestorTareas,
+verificando su funcionalidad, manejo de errores y comportamiento en casos límite.
+
+Estructura:
+----------
+- Fixture:
+  * gestor: Proporciona una instancia limpia de GestorTareas para cada prueba.
+
+- Pruebas unitarias:
+  * Testeo de funcionalidad básica (CRUD)
+  * Validación de entradas (usuarios, descripciones, categorías)
+  * Manejo de caracteres especiales (unicode, emojis, acentos)
+  * Comportamiento con casos límite (longitudes máximas, strings vacíos)
+  * Verificación de IDs incrementales y no reutilizados
+  * Pruebas parametrizadas para combinaciones de inputs
+
+Características cubiertas:
+-------------------------
+- Manejo de usuarios: mayúsculas, minúsculas, tildes, espacios, alfanuméricos
+- Descripciones: caracteres especiales, emojis, acentos, longitudes variables
+- Categorías: validación estricta (solo lowercase), manejo de errores
+- Operaciones: agregar, eliminar, obtener tareas con diferentes escenarios
+- Robustez: manejo de errores personalizados, estado consistente tras operaciones
+
+Excepciones probadas:
+--------------------
+- DescripcionVaciaError
+- TareaNoEncontradaError
+- UsuarioSinTareasError
+- CategoriaInvalidaError
+
+Ejemplos de casos testeados:
+--------------------------
+- Usuarios con caracteres especiales (tildes, números, espacios)
+- Descripciones con emojis, acentos, caracteres de escape
+- Categorías inválidas (mayúsculas, espacios, valores vacíos)
+- Secuencias complejas de operaciones (agregar/eliminar múltiples)
+- Comportamiento con 100+ tareas
+- Verificación de IDs únicos e incrementales
+
+Uso:
+----
+Ejecutar todas las pruebas con pytest:
+$ pytest test_tareas.py -v
+
+Ejecutar pruebas específicas con marcadores:
+$ pytest test_tareas.py -m parametrizadas -v
+"""
