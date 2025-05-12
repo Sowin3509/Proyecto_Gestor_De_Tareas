@@ -10,11 +10,6 @@ from exceptions.exceptions import (
 )
 
 class AppConsola:
-    """
-    Clase que representa la aplicación de consola para gestionar tareas.
-    Encapsula la lógica de sesión, usuarios y operaciones sobre tareas.
-    """
-
     def __init__(self):
         self.__usuariosRegistrados = {}  # Dict[str, Usuario]
         self.__usuarioActual = None
