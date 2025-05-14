@@ -2,7 +2,7 @@ import sys
 import os
 import logging
 import tkinter as tk
-from tkinter import messagebox, simpledialog
+from tkinter import messagebox, simpledialog, ttk
 from datetime import datetime
 from services.gestor_tareas import GestorTareas
 from exceptions.exceptions import (
@@ -39,6 +39,7 @@ class AppGUI:
             
         self.usuarios = {}  
         self.usuarioActual = None
+        self.tarea_seleccionada = None
         self.configurar_logging()
         self.menuPrincipal()
 
@@ -84,6 +85,7 @@ class AppGUI:
             ("Agregar Tarea", self.agregarTarea),
             ("Ver Mis Tareas", self.verTareas),
             ("Eliminar Tarea", self.eliminarTarea),
+            ("Cambiar Estado de Tarea", self.mostrar_ventana_cambiar_estado),
             ("Cerrar Sesión", self.cerrarSesion)
         ]
 
@@ -185,10 +187,10 @@ class AppGUI:
                 listbox.insert(tk.END, "No hay tareas registradas")
             else:
                 for tarea in tareas:
-                    estado = "✓" if tarea['completada'] else "✗"
+                    estado = tarea.get('estado', 'Pendiente')
                     fecha = tarea['fecha_creacion'].strftime("%d/%m/%Y %H:%M") if isinstance(tarea['fecha_creacion'], datetime) else tarea['fecha_creacion']
                     listbox.insert(tk.END, 
-                                f"ID: {tarea['id']} | {fecha} | {tarea['descripcion'][:30]}... | Cat: {tarea['categoria']} | {estado}")
+                                f"ID: {tarea['id']} | {fecha} | {tarea['descripcion'][:30]}... | Cat: {tarea['categoria']} | Estado: {estado}")
             
             listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             scrollbar.config(command=listbox.yview)
@@ -209,11 +211,9 @@ class AppGUI:
             if tarea_id is None:
                 return
                 
-            # Usamos el método del gestor para verificar pertenencia
             if not self.gestor.tarea_pertenece_a_usuario(tarea_id, self.usuarioActual):
                 raise TareaNoEncontradaError("Tarea no encontrada o no pertenece al usuario")
                 
-            # Obtenemos detalles para mostrar en confirmación
             tarea = self.gestor.obtener_tarea(tarea_id)
             confirmacion = messagebox.askyesno(
                 "Confirmar", 
@@ -232,6 +232,98 @@ class AppGUI:
             messagebox.showerror("Error", f"Error inesperado: {str(e)}")
             logging.error(f"Error al eliminar tarea: {str(e)}")
 
+    def mostrar_ventana_cambiar_estado(self):
+        if not self.usuarioActual:
+            messagebox.showerror("Error", "Debe iniciar sesión primero")
+            return
+
+        ventana_estado = tk.Toplevel(self.root)
+        ventana_estado.title("Cambiar Estado de Tarea")
+        ventana_estado.geometry("400x300")
+
+        tk.Label(ventana_estado, 
+                text="Seleccione una tarea y su nuevo estado",
+                font=("Arial", 12)).pack(pady=10)
+
+        # Frame para la lista de tareas
+        frame_tareas = tk.Frame(ventana_estado)
+        frame_tareas.pack(pady=5, fill=tk.BOTH, expand=True)
+
+        scrollbar = tk.Scrollbar(frame_tareas)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.lista_tareas = tk.Listbox(
+            frame_tareas,
+            yscrollcommand=scrollbar.set,
+            width=50,
+            height=8,
+            font=("Arial", 10)
+        )
+        self.lista_tareas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.config(command=self.lista_tareas.yview)
+
+        # Cargar tareas
+        try:
+            tareas = self.gestor.obtener_tareas_usuario(self.usuarioActual)
+            if not tareas:
+                self.lista_tareas.insert(tk.END, "No hay tareas registradas")
+            else:
+                for tarea in tareas:
+                    estado = tarea.get('estado', 'Pendiente')
+                    self.lista_tareas.insert(
+                        tk.END, 
+                        f"ID: {tarea['id']} - {tarea['descripcion'][:30]}... ({estado})"
+                    )
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudieron cargar tareas: {str(e)}")
+
+        # Frame para el selector de estado
+        frame_estado = tk.Frame(ventana_estado)
+        frame_estado.pack(pady=10)
+
+        tk.Label(frame_estado, text="Nuevo estado:").pack(side=tk.LEFT)
+
+        self.combo_estado = ttk.Combobox(
+            frame_estado,
+            values=["Pendiente", "Completada", "Sin realizar"],
+            state="readonly"
+        )
+        self.combo_estado.pack(side=tk.LEFT, padx=5)
+        self.combo_estado.set("Pendiente")
+
+        # Botón para aplicar cambios
+        btn_actualizar = tk.Button(
+            ventana_estado,
+            text="Actualizar Estado",
+            command=self.actualizar_estado_tarea
+        )
+        btn_actualizar.pack(pady=10)
+
+    def actualizar_estado_tarea(self):
+        seleccion = self.lista_tareas.curselection()
+        if not seleccion:
+            messagebox.showwarning("Advertencia", "Seleccione una tarea primero")
+            return
+
+        tarea_texto = self.lista_tareas.get(seleccion[0])
+        tarea_id = int(tarea_texto.split("ID: ")[1].split(" -")[0])
+        nuevo_estado = self.combo_estado.get()
+
+        try:
+            if not self.gestor.tarea_pertenece_a_usuario(tarea_id, self.usuarioActual):
+                raise TareaNoEncontradaError("Tarea no encontrada o no pertenece al usuario")
+
+            self.gestor.cambiar_estado(tarea_id, nuevo_estado)
+            messagebox.showinfo("Éxito", f"Estado actualizado a: {nuevo_estado}")
+            self.lista_tareas.delete(seleccion[0])
+            self.lista_tareas.insert(
+                seleccion[0],
+                f"ID: {tarea_id} - {tarea_texto.split(' - ')[1].split(' (')[0]}... ({nuevo_estado})"
+            )
+            self.lista_tareas.selection_set(seleccion[0])
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo actualizar: {str(e)}")
+
 if __name__ == "__main__":
     root = tk.Tk()
     try:
@@ -244,7 +336,6 @@ if __name__ == "__main__":
             "Ha ocurrido un error crítico. Ver logs para detalles."
         )
         root.destroy()
-
 """
 Interfaz Gráfica Actualizada para Gestor de Tareas con PostgreSQL
 

@@ -16,6 +16,9 @@ class TareaNoEncontradaError(Exception):
 class UsuarioSinTareasError(Exception):
     pass
 
+class EstadoInvalidoError(Exception):
+    pass
+
 class GestorTareas:
     def __init__(self, db_config: Optional[Dict[str, Any]] = None):
         self.db_config = db_config
@@ -71,7 +74,8 @@ class GestorTareas:
                 descripcion TEXT NOT NULL,
                 categoria VARCHAR(50) NOT NULL,
                 fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                completada BOOLEAN DEFAULT FALSE
+                estado VARCHAR(20) NOT NULL DEFAULT 'Pendiente' 
+                    CHECK (estado IN ('Pendiente', 'Completada', 'Sin realizar'))
             )
             """,
             """
@@ -109,7 +113,6 @@ class GestorTareas:
             raise RuntimeError(f"No se pudo obtener/crear usuario: {str(e)}")
 
     def tarea_pertenece_a_usuario(self, tarea_id: int, username: str) -> bool:
-        """Verifica si una tarea pertenece al usuario"""
         try:
             tarea = self.obtener_tarea(tarea_id)
             if not tarea:
@@ -138,8 +141,8 @@ class GestorTareas:
                 usuario_id = self._obtener_id_usuario(usuario)
                 with self.conn.cursor() as cur:
                     cur.execute(
-                        """INSERT INTO tareas (usuario_id, descripcion, categoria) 
-                        VALUES (%s, %s, %s) RETURNING id""",
+                        """INSERT INTO tareas (usuario_id, descripcion, categoria, estado) 
+                        VALUES (%s, %s, %s, 'Pendiente') RETURNING id""",
                         (usuario_id, descripcion, categoria.lower())
                     )
                     tarea_id = cur.fetchone()[0]
@@ -153,7 +156,7 @@ class GestorTareas:
                     'descripcion': descripcion,
                     'categoria': categoria.lower(),
                     'fecha_creacion': datetime.now(),
-                    'completada': False
+                    'estado': 'Pendiente'
                 }
                 self.contador_id += 1
                 return tarea_id
@@ -168,7 +171,7 @@ class GestorTareas:
                 with self.conn.cursor() as cur:
                     cur.execute(
                         """SELECT t.id, t.usuario_id, t.descripcion, t.categoria, 
-                                  t.fecha_creacion, t.completada
+                                  t.fecha_creacion, t.estado
                            FROM tareas t
                            WHERE t.id = %s""",
                         (tarea_id,)
@@ -182,7 +185,7 @@ class GestorTareas:
                         'descripcion': tarea[2],
                         'categoria': tarea[3],
                         'fecha_creacion': tarea[4],
-                        'completada': tarea[5]
+                        'estado': tarea[5]
                     }
             else:
                 if tarea_id not in self.tareas:
@@ -215,7 +218,7 @@ class GestorTareas:
                 with self.conn.cursor() as cur:
                     cur.execute(
                         """SELECT t.id, t.usuario_id, t.descripcion, t.categoria, 
-                                  t.fecha_creacion, t.completada
+                                  t.fecha_creacion, t.estado
                            FROM tareas t
                            WHERE t.usuario_id = %s
                            ORDER BY t.fecha_creacion DESC""",
@@ -231,7 +234,7 @@ class GestorTareas:
                             'descripcion': row[2],
                             'categoria': row[3],
                             'fecha_creacion': row[4],
-                            'completada': row[5],
+                            'estado': row[5],
                             'usuario': usuario
                         } for row in tareas_data
                     ]
@@ -265,22 +268,25 @@ class GestorTareas:
                 self.conn.rollback()
             raise RuntimeError(f"Error al actualizar tarea {tarea_id}: {str(e)}")
 
-    def marcar_como_completada(self, tarea_id: int, completada: bool = True):
+    def cambiar_estado(self, tarea_id: int, nuevo_estado: str):
         try:
+            if nuevo_estado not in ["Pendiente", "Completada", "Sin realizar"]:
+                raise EstadoInvalidoError("Estado debe ser: Pendiente, Completada o Sin realizar")
+
             if self.usa_postgresql and self.conn:
                 with self.conn.cursor() as cur:
                     cur.execute(
-                        "UPDATE tareas SET completada = %s WHERE id = %s",
-                        (completada, tarea_id))
+                        "UPDATE tareas SET estado = %s WHERE id = %s",
+                        (nuevo_estado, tarea_id))
                     self.conn.commit()
             else:
                 if tarea_id not in self.tareas:
                     raise TareaNoEncontradaError(f"No existe tarea con ID {tarea_id}")
-                self.tareas[tarea_id]['completada'] = completada
+                self.tareas[tarea_id]['estado'] = nuevo_estado
         except Exception as e:
             if self.usa_postgresql and self.conn:
                 self.conn.rollback()
-            raise RuntimeError(f"Error al actualizar estado de tarea {tarea_id}: {str(e)}")
+            raise RuntimeError(f"Error al cambiar estado de tarea {tarea_id}: {str(e)}")
 
     def __del__(self):
         if hasattr(self, 'conn') and self.conn and not self.conn.closed:
