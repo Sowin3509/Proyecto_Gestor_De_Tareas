@@ -1,115 +1,65 @@
 # Gestor_Tareas_2025
-Integrantes: Santiago Calle L - Wilson Manuel Castillo Vergara - Proyecto De Aula Lenguajes de programación y Código Limpio 2025-1
 
-## Requisitos del Sistema
+**Integrantes**: Santiago Calle L - Wilson Manuel Castillo Vergara  
+**Proyecto De Aula**: Lenguajes de programación y Código Limpio 2025-1
 
-1. Crear una tarea: La aplicación debe permitir a los usuarios crear una tarea en el sistema
-2. Editar una tarea: La aplicación debe permitir a los usuarios editar una tarea existente en el sistema
-3. Eliminar una tarea: La aplicación debe permitir a los usuarios eliminar una tarea existente en el sistema
-4. Iniciar sesión: La aplicación debe permitir a los usuarios iniciar sesión en el sistema con un usuario ya existente
-5. Crear cuenta: Los usuarios deben poder darse de alta en el sistema
-6. Cambiar contraseña: El sistema debe permitir a los usuarios cambiar sus contraseñas cuando ellos lo deseen.
+## 🚀 Novedades en la Versión 2.0
 
----
+### 🔄 Sistema de Gestión de Estados
+- **Nuevo campo `estado`** con tres valores posibles:
+  - ✅ `Completada`
+  - ⏳ `Pendiente` (valor por defecto)
+  - ❌ `Sin realizar`
+- Eliminación del campo booleano `completada`
+- Interfaz gráfica actualizada con selector de estados
 
-## Casos de Prueba Unitarios (54)
+### 🛠️ Mejoras en la Base de Datos
+- Migración completa del esquema de base de datos
+- Nuevas vistas optimizadas (`vista_estadisticas_tareas`, `reporte_productividad`)
+- Eliminación de tablas redundantes (`categorias`)
+- Simplificación de la estructura de usuarios
 
-### Pruebas de Agregar Tarea
+### 🖥️ Mejoras en la Interfaz
+- Nueva ventana para gestión de estados
+- Visualización mejorada de tareas con colores por estado
+- Menú principal reorganizado
+
+## 📋 Requisitos del Sistema Actualizados
+
+1. **Gestión de Tareas**:
+   - Crear tareas con categorías (trabajo/personal/estudio)
+   - Editar descripción de tareas existentes
+   - Cambiar estado de tareas (Completada/Pendiente/Sin realizar)
+   - Eliminar tareas
+
+2. **Gestión de Usuarios**:
+   - Crear cuenta con autenticación segura
+   - Iniciar sesión con validación de credenciales
+   - Cerrar sesión
+
+3. **Visualización**:
+   - Ver listado completo de tareas
+   - Filtrar tareas por estado
+   - Estadísticas de productividad
+
+## 🧪 Casos de Prueba Unitarios (60+)
+
+### Pruebas de Agregar Tarea (Actualizadas)
 
 | Caso | Descripción | Entrada | Salida Esperada | Categoría |
 |------|-------------|---------|-----------------|-----------|
-| 1 | Agregar tarea con espacios y números en usuario | Usuario: "123 Juan", Descripción: "Estudiar python 3.8" | Tarea agregada correctamente | personal |
-| 2 | Validar categoría case sensitive | Categoría: "Trabajo" (con mayúscula) | Lanza CategoriaInvalidaError | - |
-| 3 | Agregar tarea con tabulaciones en descripción | Descripción: "\tLavar carro\t" | Tarea agregada (sin tabulaciones) | personal |
-| 4 | Usuario con mayúsculas | Usuario: "CARLOS" | Tarea agregada correctamente | trabajo |
-| 5 | Eliminar después de obtener | - | Tarea eliminada correctamente | personal |
-| 6 | IDs no reutilizados | - | Nuevo ID diferente al eliminado | trabajo |
-| 7 | Agregar 100 tareas | - | 100 tareas creadas correctamente | personal |
-| 8 | Descripción vacía | Descripción: " " | Lanza DescripcionVaciaError | trabajo |
-| 9 | Descripción con números | Descripción: "Revisar tema 2.1" | Tarea agregada correctamente | trabajo |
-| 10 | Descripción con comilla simple | Descripción: "Llamar a 'Mamá'" | Tarea agregada correctamente | personal |
-| 11 | Descripción con comilla doble | Descripción: 'Leer "1984"' | Tarea agregada correctamente | estudio |
-| 12 | Descripción con signos | Descripción: "Hacer tarea #2!" | Tarea agregada correctamente | trabajo |
-| 13 | Eliminar y reagregar misma descripción | - | Nuevo ID incrementado | personal |
-| 14 | Múltiples usuarios misma descripción | - | Cada usuario tiene su tarea | personal |
-| 15 | Categoría solo mayúsculas | Categoría: "TRABAJO" | Lanza CategoriaInvalidaError | - |
-| 16 | Categoría vacía | Categoría: "" | Lanza CategoriaInvalidaError | - |
-| 17 | Usuario con espacios internos | Usuario: "Juan Pérez" | Tarea agregada correctamente | personal |
-| 18 | Usuario con mayúsculas/minúsculas | Usuario: "luis" | Tarea agregada correctamente | trabajo |
-| 19 | Eliminar última tarea | - | Tarea eliminada correctamente | trabajo |
-| 20 | Eliminar múltiples y agregar nueva | - | Nueva tarea con ID mayor | trabajo |
-| 21 | Descripción con acentos | Descripción: "Estudiar álgebra" | Tarea agregada correctamente | estudio |
-| 22 | Usuario con tilde | Usuario: "José" | Tarea agregada correctamente | personal |
-| 23 | Usuario con caracteres Unicode | Usuario: "Renée" | Tarea agregada correctamente | trabajo |
-| 24 | Obtener y eliminar en cadena | - | Tarea eliminada correctamente | personal |
-| 25 | Descripción larga (500 chars) | - | Tarea agregada correctamente | personal |
-| 26 | Usuario largo (100 chars) | - | Tarea agregada correctamente | trabajo |
+| 1 | Agregar tarea con nuevo sistema de estados | Estado: "Completada" | Tarea creada con estado correcto | trabajo |
+| 2 | Validar estado por defecto | - | Estado inicial: "Pendiente" | personal |
 
-### Pruebas de Funcionalidad Avanzada
+### Nuevas Pruebas de Estado
 
-| Caso | Descripción | Entrada | Salida Esperada | Categoría |
-|------|-------------|---------|-----------------|-----------|
-| 27 | IDs incrementales después de error | - | ID incrementado correctamente | trabajo |
-| 28 | Múltiples usuarios diferentes | - | 10 tareas creadas correctamente | personal |
-| 29 | Usuario con números y tilde | Usuario: "José123" | Tarea agregada correctamente | trabajo |
-| 30 | Usuario alfanumérico mayúsculas | Usuario: "CARLOS_99" | Tarea agregada correctamente | trabajo |
-| 31 | Descripción con salto de línea | Descripción: "Nueva línea\nTest" | Tarea agregada correctamente | estudio |
-| 32 | Categoría con espacios | Categoría: " personal " | Lanza CategoriaInvalidaError | - |
-| 33 | Obtener con espacio en nombre | Usuario: "Laura" | Tarea obtenida correctamente | personal |
-| 34 | Descripción con hashtag | Descripción: "#HackathonReady" | Tarea agregada correctamente | trabajo |
-| 35 | Usuario con números y minúsculas | Usuario: "andres09" | Tarea agregada correctamente | personal |
-
-### Pruebas Parametrizadas
-
-| Caso | Descripción | Entrada | Salida Esperada | 
-|------|-------------|---------|-----------------|
-| 36 | Categorías válidas (parametrizado) | "trabajo", "personal", "estudio" | Tarea agregada correctamente |
-| 37 | Combinaciones inválidas (parametrizado) | Varias combinaciones inválidas | Lanza excepción correspondiente |
-
-### Pruebas de Rendimiento
-
-| Caso | Descripción | Entrada | Salida Esperada | 
-|------|-------------|---------|-----------------|
-| 38 | Agregar 100 tareas rápidamente | - | 100 tareas creadas sin errores |
-
-### Pruebas de Edge Cases
-
-| Caso | Descripción | Entrada | Salida Esperada |
-|------|-------------|---------|-----------------|
-| 39 | Usuario con emojis | Usuario: "Andrés", Descripción: "🍎" | Tarea agregada correctamente |
-| 40 | Descripción con caracteres especiales | Descripción: "!@#$%^&*()_+" | Tarea agregada correctamente |
-| 41 | Mismo nombre diferente usuario | - | Cada usuario mantiene su tarea |
-| 42 | Usuario con nombre muy largo | Usuario: "Usuario"*20 | Tarea agregada correctamente |
-| 43 | Eliminar tareas intercaladas | - | Solo quedan tareas no eliminadas |
-| 44 | Secuencia agregar/eliminar varias | - | Comportamiento correcto |
-
-### Pruebas de Validación
-
-| Caso | Descripción | Entrada | Salida Esperada |
-|------|-------------|---------|-----------------|
-| 45 | Usuario vacío | Usuario: "" | Lanza ValueError |
-| 46 | Descripción vacía | Descripción: " " | Lanza DescripcionVaciaError |
-| 47 | Categoría inválida | Categoría: "diversion" | Lanza CategoriaInvalidaError |
-
-### Pruebas de Integración
-
-| Caso | Descripción | Entrada | Salida Esperada |
-|------|-------------|---------|-----------------|
-| 48 | Agregar, editar y eliminar | - | Flujo completo funciona |
-| 49 | Múltiples operaciones combinadas | - | Sistema se comporta correctamente |
-
-### Pruebas de Usuario
-
-| Caso | Descripción | Entrada | Salida Esperada |
-|------|-------------|---------|-----------------|
-| 50 | Usuario con tildes | Usuario: "José" | Tarea agregada correctamente |
-| 51 | Usuario con caracteres Unicode | Usuario: "Renée" | Tarea agregada correctamente |
-| 52 | Usuario con números | Usuario: "Usuario1" | Tarea agregada correctamente |
-| 53 | Usuario con guiones bajos | Usuario: "usuario_1" | Tarea agregada correctamente |
-| 54 | Usuario con espacios internos | Usuario: "Juan Carlos" | Tarea agregada correctamente |
+| Caso | Descripción | Estado Inicial | Estado Nuevo | Resultado Esperado |
+|------|-------------|----------------|--------------|---------------------|
+| 55 | Cambiar estado a Completada | Pendiente | Completada | Actualización exitosa |
+| 56 | Cambiar estado a Sin realizar | Completada | Sin realizar | Actualización exitosa |
 
 ---
-## Diagrama de Clases
+## 📊 Diagrama de Clases
 
 ![Diagrama de Clases del Gestor de Tareas](image.png)
 
