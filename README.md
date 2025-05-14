@@ -44,12 +44,99 @@
 
 ## 🧪 Casos de Prueba Unitarios (60+)
 
-### Pruebas de Agregar Tarea (Actualizadas)
+### Pruebas de Agregar Tarea
 
 | Caso | Descripción | Entrada | Salida Esperada | Categoría |
 |------|-------------|---------|-----------------|-----------|
-| 1 | Agregar tarea con nuevo sistema de estados | Estado: "Completada" | Tarea creada con estado correcto | trabajo |
-| 2 | Validar estado por defecto | - | Estado inicial: "Pendiente" | personal |
+| 1 | Agregar tarea con espacios y números en usuario | Usuario: "123 Juan", Descripción: "Estudiar python 3.8" | Tarea agregada correctamente | personal |
+| 2 | Validar categoría case sensitive | Categoría: "Trabajo" (con mayúscula) | Lanza CategoriaInvalidaError | - |
+| 3 | Agregar tarea con tabulaciones en descripción | Descripción: "\tLavar carro\t" | Tarea agregada (sin tabulaciones) | personal |
+| 4 | Usuario con mayúsculas | Usuario: "CARLOS" | Tarea agregada correctamente | trabajo |
+| 5 | Eliminar después de obtener | - | Tarea eliminada correctamente | personal |
+| 6 | IDs no reutilizados | - | Nuevo ID diferente al eliminado | trabajo |
+| 7 | Agregar 100 tareas | - | 100 tareas creadas correctamente | personal |
+| 8 | Descripción vacía | Descripción: " " | Lanza DescripcionVaciaError | trabajo |
+| 9 | Descripción con números | Descripción: "Revisar tema 2.1" | Tarea agregada correctamente | trabajo |
+| 10 | Descripción con comilla simple | Descripción: "Llamar a 'Mamá'" | Tarea agregada correctamente | personal |
+| 11 | Descripción con comilla doble | Descripción: 'Leer "1984"' | Tarea agregada correctamente | estudio |
+| 12 | Descripción con signos | Descripción: "Hacer tarea #2!" | Tarea agregada correctamente | trabajo |
+| 13 | Eliminar y reagregar misma descripción | - | Nuevo ID incrementado | personal |
+| 14 | Múltiples usuarios misma descripción | - | Cada usuario tiene su tarea | personal |
+| 15 | Categoría solo mayúsculas | Categoría: "TRABAJO" | Lanza CategoriaInvalidaError | - |
+| 16 | Categoría vacía | Categoría: "" | Lanza CategoriaInvalidaError | - |
+| 17 | Usuario con espacios internos | Usuario: "Juan Pérez" | Tarea agregada correctamente | personal |
+| 18 | Usuario con mayúsculas/minúsculas | Usuario: "luis" | Tarea agregada correctamente | trabajo |
+| 19 | Eliminar última tarea | - | Tarea eliminada correctamente | trabajo |
+| 20 | Eliminar múltiples y agregar nueva | - | Nueva tarea con ID mayor | trabajo |
+| 21 | Descripción con acentos | Descripción: "Estudiar álgebra" | Tarea agregada correctamente | estudio |
+| 22 | Usuario con tilde | Usuario: "José" | Tarea agregada correctamente | personal |
+| 23 | Usuario con caracteres Unicode | Usuario: "Renée" | Tarea agregada correctamente | trabajo |
+| 24 | Obtener y eliminar en cadena | - | Tarea eliminada correctamente | personal |
+| 25 | Descripción larga (500 chars) | - | Tarea agregada correctamente | personal |
+| 26 | Usuario largo (100 chars) | - | Tarea agregada correctamente | trabajo |
+
+### Pruebas de Funcionalidad Avanzada
+
+| Caso | Descripción | Entrada | Salida Esperada | Categoría |
+|------|-------------|---------|-----------------|-----------|
+| 27 | IDs incrementales después de error | - | ID incrementado correctamente | trabajo |
+| 28 | Múltiples usuarios diferentes | - | 10 tareas creadas correctamente | personal |
+| 29 | Usuario con números y tilde | Usuario: "José123" | Tarea agregada correctamente | trabajo |
+| 30 | Usuario alfanumérico mayúsculas | Usuario: "CARLOS_99" | Tarea agregada correctamente | trabajo |
+| 31 | Descripción con salto de línea | Descripción: "Nueva línea\nTest" | Tarea agregada correctamente | estudio |
+| 32 | Categoría con espacios | Categoría: " personal " | Lanza CategoriaInvalidaError | - |
+| 33 | Obtener con espacio en nombre | Usuario: "Laura" | Tarea obtenida correctamente | personal |
+| 34 | Descripción con hashtag | Descripción: "#HackathonReady" | Tarea agregada correctamente | trabajo |
+| 35 | Usuario con números y minúsculas | Usuario: "andres09" | Tarea agregada correctamente | personal |
+
+### Pruebas Parametrizadas
+
+| Caso | Descripción | Entrada | Salida Esperada | 
+|------|-------------|---------|-----------------|
+| 36 | Categorías válidas (parametrizado) | "trabajo", "personal", "estudio" | Tarea agregada correctamente |
+| 37 | Combinaciones inválidas (parametrizado) | Varias combinaciones inválidas | Lanza excepción correspondiente |
+
+### Pruebas de Rendimiento
+
+| Caso | Descripción | Entrada | Salida Esperada | 
+|------|-------------|---------|-----------------|
+| 38 | Agregar 100 tareas rápidamente | - | 100 tareas creadas sin errores |
+
+### Pruebas de Edge Cases
+
+| Caso | Descripción | Entrada | Salida Esperada |
+|------|-------------|---------|-----------------|
+| 39 | Usuario con emojis | Usuario: "Andrés", Descripción: "🍎" | Tarea agregada correctamente |
+| 40 | Descripción con caracteres especiales | Descripción: "!@#$%^&*()_+" | Tarea agregada correctamente |
+| 41 | Mismo nombre diferente usuario | - | Cada usuario mantiene su tarea |
+| 42 | Usuario con nombre muy largo | Usuario: "Usuario"*20 | Tarea agregada correctamente |
+| 43 | Eliminar tareas intercaladas | - | Solo quedan tareas no eliminadas |
+| 44 | Secuencia agregar/eliminar varias | - | Comportamiento correcto |
+
+### Pruebas de Validación
+
+| Caso | Descripción | Entrada | Salida Esperada |
+|------|-------------|---------|-----------------|
+| 45 | Usuario vacío | Usuario: "" | Lanza ValueError |
+| 46 | Descripción vacía | Descripción: " " | Lanza DescripcionVaciaError |
+| 47 | Categoría inválida | Categoría: "diversion" | Lanza CategoriaInvalidaError |
+
+### Pruebas de Integración
+
+| Caso | Descripción | Entrada | Salida Esperada |
+|------|-------------|---------|-----------------|
+| 48 | Agregar, editar y eliminar | - | Flujo completo funciona |
+| 49 | Múltiples operaciones combinadas | - | Sistema se comporta correctamente |
+
+### Pruebas de Usuario
+
+| Caso | Descripción | Entrada | Salida Esperada |
+|------|-------------|---------|-----------------|
+| 50 | Usuario con tildes | Usuario: "José" | Tarea agregada correctamente |
+| 51 | Usuario con caracteres Unicode | Usuario: "Renée" | Tarea agregada correctamente |
+| 52 | Usuario con números | Usuario: "Usuario1" | Tarea agregada correctamente |
+| 53 | Usuario con guiones bajos | Usuario: "usuario_1" | Tarea agregada correctamente |
+| 54 | Usuario con espacios internos | Usuario: "Juan Carlos" | Tarea agregada correctamente |
 
 ### Nuevas Pruebas de Estado
 
