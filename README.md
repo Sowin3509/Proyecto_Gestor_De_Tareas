@@ -42,7 +42,7 @@
    - Filtrar tareas por estado
    - Estadísticas de productividad
 
-## 🧪 Casos de Prueba Unitarios (60+)
+## 🧪 Casos de Prueba Unitarios (54)
 
 ### Pruebas de Agregar Tarea
 
