@@ -124,7 +124,7 @@ def cambiar_estado(id):
             flash("No tienes permiso para cambiar el estado de esta tarea")
             return redirect(url_for('index'))
 
-        gestor.cambiar_estado(id, nuevo_estado)
+        gestor.cambiar_estado_tarea(id, nuevo_estado)
         flash("Estado actualizado correctamente")
     except TareaNoEncontradaError:
         flash("Tarea no encontrada para cambiar estado")
