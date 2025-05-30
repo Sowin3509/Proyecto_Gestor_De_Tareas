@@ -1,46 +1,50 @@
 # Gestor_Tareas_2025
 
 **Integrantes**: Santiago Calle L - Wilson Manuel Castillo Vergara  
-**Proyecto De Aula**: Lenguajes de programación y Código Limpio 2025-1
+**Proyecto**: Lenguajes de programación y Código Limpio 2025-1
+
+---
+
+## 📖 Descripción
+
+Gestor_Tareas_2025 es una aplicación para administrar tareas personales, laborales y de estudio, que permite gestionar estados de las tareas, con acceso mediante autenticación segura. Cuenta con dos interfaces: una aplicación de escritorio con Tkinter y una interfaz web basada en Flask para mayor accesibilidad.
+
+---
 
 ## 🚀 Novedades en la Versión 2.0
 
-### 🔄 Sistema de Gestión de Estados
-- **Nuevo campo `estado`** con tres valores posibles:
-  - ✅ `Completada`
-  - ⏳ `Pendiente` (valor por defecto)
-  - ❌ `Sin realizar`
-- Eliminación del campo booleano `completada`
-- Interfaz gráfica actualizada con selector de estados
+- Implementación del campo `estado` en tareas con los valores:
+  - ✅ Completada
+  - ⏳ Pendiente (por defecto)
+  - ❌ Sin realizar
+- Eliminación del campo booleano `completada`.
+- Migración y optimización de base de datos con nuevas vistas para reportes y productividad.
+- Nuevas pruebas unitarias y de integración (más de 54 casos).
+- Nueva interfaz web con Flask para gestión básica de tareas.
+- Interfaz gráfica Tkinter mejorada con selector de estados y codificación por colores.
+- Gestión segura de usuarios con hash de contraseñas.
 
-### 🛠️ Mejoras en la Base de Datos
-- Migración completa del esquema de base de datos
-- Nuevas vistas optimizadas (`vista_estadisticas_tareas`, `reporte_productividad`)
-- Eliminación de tablas redundantes (`categorias`)
-- Simplificación de la estructura de usuarios
+---
 
-### 🖥️ Mejoras en la Interfaz
-- Nueva ventana para gestión de estados
-- Visualización mejorada de tareas con colores por estado
-- Menú principal reorganizado
+## 📋 Requisitos Funcionales
 
-## 📋 Requisitos del Sistema Actualizados
+### Gestión de Tareas
+- Crear, editar, eliminar tareas.
+- Asignar tareas a categorías: `trabajo`, `personal`, `estudio`.
+- Cambiar estado de tareas entre `Completada`, `Pendiente`, `Sin realizar`.
+- Visualizar tareas filtradas por estado y categoría.
+- Estadísticas de productividad.
 
-1. **Gestión de Tareas**:
-   - Crear tareas con categorías (trabajo/personal/estudio)
-   - Editar descripción de tareas existentes
-   - Cambiar estado de tareas (Completada/Pendiente/Sin realizar)
-   - Eliminar tareas
+### Gestión de Usuarios
+- Registro e inicio de sesión con validación.
+- Hash seguro de contraseñas.
+- Cierre de sesión.
 
-2. **Gestión de Usuarios**:
-   - Crear cuenta con autenticación segura
-   - Iniciar sesión con validación de credenciales
-   - Cerrar sesión
+### Interfaces
+- **Tkinter**: Interfaz de escritorio con menú, ventanas para CRUD de tareas y gestión de estados.
+- **Web (Flask)**: Interfaz simple para listar, agregar y modificar tareas desde navegador.
 
-3. **Visualización**:
-   - Ver listado completo de tareas
-   - Filtrar tareas por estado
-   - Estadísticas de productividad
+---
 
 ## 🧪 Casos de Prueba Unitarios (54)
 
@@ -137,13 +141,6 @@
 | 52 | Usuario con números | Usuario: "Usuario1" | Tarea agregada correctamente |
 | 53 | Usuario con guiones bajos | Usuario: "usuario_1" | Tarea agregada correctamente |
 | 54 | Usuario con espacios internos | Usuario: "Juan Carlos" | Tarea agregada correctamente |
-
-### Nuevas Pruebas de Estado
-
-| Caso | Descripción | Estado Inicial | Estado Nuevo | Resultado Esperado |
-|------|-------------|----------------|--------------|---------------------|
-| 55 | Cambiar estado a Completada | Pendiente | Completada | Actualización exitosa |
-| 56 | Cambiar estado a Sin realizar | Completada | Sin realizar | Actualización exitosa |
 
 ---
 ## 📊 Diagrama de Clases

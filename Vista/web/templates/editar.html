@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar tarea</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .flash { background-color: #ffffcc; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h2>Editar tarea</h2>
+    <a href="{{ url_for('index') }}">Volver a lista de tareas</a>
+
+    {% with mensajes = get_flashed_messages() %}
+        {% if mensajes %}
+            {% for mensaje in mensajes %}
+                <div class="flash">{{ mensaje }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Descripción:</label><br>
+        <input type="text" name="descripcion" value="{{ tarea.descripcion }}" required><br><br>
+
+        <label>Categoría:</label><br>
+        <select name="categoria" required>
+            <option value="trabajo" {% if tarea.categoria == 'trabajo' %}selected{% endif %}>Trabajo</option>
+            <option value="personal" {% if tarea.categoria == 'personal' %}selected{% endif %}>Personal</option>
+            <option value="estudio" {% if tarea.categoria == 'estudio' %}selected{% endif %}>Estudio</option>
+        </select><br><br>
+
+        <button type="submit">Guardar cambios</button>
+    </form>
+</body>
+</html>

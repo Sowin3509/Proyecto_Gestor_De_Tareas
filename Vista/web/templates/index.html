@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tareas de {{ usuario }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        form.inline { display: inline; }
+        .flash { background-color: #ffffcc; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h2>Hola, {{ usuario }}</h2>
+    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+
+    {% with mensajes = get_flashed_messages() %}
+        {% if mensajes %}
+            {% for mensaje in mensajes %}
+                <div class="flash">{{ mensaje }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h3>Agregar tarea</h3>
+    <form method="POST" action="{{ url_for('agregar') }}">
+        <input type="text" name="descripcion" placeholder="Descripción" required>
+        <select name="categoria">
+            <option value="trabajo">Trabajo</option>
+            <option value="personal">Personal</option>
+            <option value="estudio">Estudio</option>
+        </select>
+        <button type="submit">Agregar</button>
+    </form>
+
+    <h3>Tareas</h3>
+    {% if tareas %}
+    <table>
+        <tr>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% for tarea in tareas %}
+        <tr>
+            <td>{{ tarea.descripcion }}</td>
+            <td>{{ tarea.categoria }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('cambiar_estado', id=tarea.id) }}" class="inline">
+                    <select name="estado" onchange="this.form.submit()">
+                        <option value="Pendiente" {% if tarea.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="Completada" {% if tarea.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                        <option value="Sin realizar" {% if tarea.estado == 'Sin realizar' %}selected{% endif %}>Sin realizar</option>
+                    </select>
+                </form>
+            </td>
+            <td>
+                <a href="{{ url_for('editar', id=tarea.id) }}">Editar</a> |
+                <a href="{{ url_for('eliminar', id=tarea.id) }}" onclick="return confirm('¿Seguro que quieres eliminar esta tarea?')">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No tienes tareas registradas.</p>
+    {% endif %}
+</body>
+</html>

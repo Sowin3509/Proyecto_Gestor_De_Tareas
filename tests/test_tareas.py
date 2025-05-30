@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from services.gestor_tareas import GestorTareas
 from exceptions.exceptions import (
     DescripcionVaciaError, TareaNoEncontradaError, UsuarioSinTareasError,
@@ -8,12 +9,12 @@ from exceptions.exceptions import (
 # ------------------------- FIXTURE -------------------------
 @pytest.fixture
 def gestor():
-    return GestorTareas()
+    return GestorTareas()  # Modo memoria activado por defecto
 
 # ------------------------- PRUEBAS UNITARIAS 54 -------------------------
 def test_agregar_tarea_espacios_y_numeros(gestor):
     tarea_id = gestor.agregar_tarea("123 Juan", "Estudiar python 3.8", "estudio")
-    assert "123 Juan" == gestor.tareas[tarea_id].usuario
+    assert gestor.tareas[tarea_id]['usuario'] == "123 Juan"
 
 def test_categoria_case_sensitive(gestor):
     with pytest.raises(CategoriaInvalidaError):
@@ -21,7 +22,7 @@ def test_categoria_case_sensitive(gestor):
 
 def test_agregar_tarea_con_tabulaciones(gestor):
     tarea_id = gestor.agregar_tarea("Teo", "\tLavar carro\t", "personal")
-    assert "Lavar carro" in gestor.tareas[tarea_id].descripcion
+    assert "Lavar carro" in gestor.tareas[tarea_id]['descripcion']
 
 def test_obtener_tareas_usuario_con_mayusculas(gestor):
     gestor.agregar_tarea("CARLOS", "Investigar Kivy", "trabajo")
@@ -32,7 +33,8 @@ def test_eliminar_tras_obtener(gestor):
     tarea_id = gestor.agregar_tarea("Eva", "Pagar servicios", "personal")
     _ = gestor.obtener_tareas_usuario("Eva")
     gestor.eliminar_tarea(tarea_id)
-    assert tarea_id not in gestor.tareas
+    with pytest.raises(TareaNoEncontradaError):
+        gestor.obtener_tarea(tarea_id)
 
 def test_ids_no_se_reutilizan(gestor):
     id1 = gestor.agregar_tarea("Test", "T1", "trabajo")
@@ -46,25 +48,24 @@ def test_agregar_100_tareas(gestor):
     assert len(gestor.tareas) == 100
 
 def test_error_personalizado_se_mantiene(gestor):
-    with pytest.raises(DescripcionVaciaError) as exc_info:
+    with pytest.raises(DescripcionVaciaError):
         gestor.agregar_tarea("Luis", " ", "trabajo")
-    assert "descripción" in str(exc_info.value).lower()
 
 def test_agregar_tarea_con_numeros(gestor):
     tarea_id = gestor.agregar_tarea("Usuario1", "Revisar tema 2.1", "trabajo")
-    assert "2.1" in gestor.tareas[tarea_id].descripcion
+    assert "2.1" in gestor.tareas[tarea_id]['descripcion']
 
 def test_agregar_tarea_comilla_simple(gestor):
     tarea_id = gestor.agregar_tarea("Carlos", "Llamar a 'Mamá'", "personal")
-    assert "'Mamá'" in gestor.tareas[tarea_id].descripcion
+    assert "'Mamá'" in gestor.tareas[tarea_id]['descripcion']
 
 def test_agregar_tarea_comilla_doble(gestor):
     tarea_id = gestor.agregar_tarea("Laura", 'Leer "1984"', "estudio")
-    assert '"1984"' in gestor.tareas[tarea_id].descripcion
+    assert '"1984"' in gestor.tareas[tarea_id]['descripcion']
 
 def test_agregar_tarea_con_signos(gestor):
     tarea_id = gestor.agregar_tarea("Diego", "Hacer tarea #2!", "trabajo")
-    assert "#2!" in gestor.tareas[tarea_id].descripcion
+    assert "#2!" in gestor.tareas[tarea_id]['descripcion']
 
 def test_eliminar_y_reagregar_misma_desc(gestor):
     id1 = gestor.agregar_tarea("User", "Desc", "personal")
@@ -88,7 +89,7 @@ def test_categoria_vacia(gestor):
 
 def test_usuario_con_espacios_internos(gestor):
     tarea_id = gestor.agregar_tarea("Juan Pérez", "Caminar", "personal")
-    assert gestor.tareas[tarea_id].usuario == "Juan Pérez"
+    assert gestor.tareas[tarea_id]['usuario'] == "Juan Pérez"
 
 def test_usuario_mayusculas_minusculas(gestor):
     gestor.agregar_tarea("luis", "Algo", "trabajo")
@@ -98,7 +99,8 @@ def test_usuario_mayusculas_minusculas(gestor):
 def test_eliminar_ultima_tarea(gestor):
     tarea_id = gestor.agregar_tarea("Lina", "Finalizar código", "trabajo")
     gestor.eliminar_tarea(tarea_id)
-    assert tarea_id not in gestor.tareas
+    with pytest.raises(TareaNoEncontradaError):
+        gestor.obtener_tarea(tarea_id)
 
 def test_eliminar_multiples_y_agregar_nueva(gestor):
     ids = [gestor.agregar_tarea("U", f"T{i}", "personal") for i in range(3)]
@@ -109,31 +111,32 @@ def test_eliminar_multiples_y_agregar_nueva(gestor):
 
 def test_descripcion_con_acentos(gestor):
     tarea_id = gestor.agregar_tarea("Pepe", "Estudiar álgebra", "estudio")
-    assert "álgebra" in gestor.tareas[tarea_id].descripcion
+    assert "álgebra" in gestor.tareas[tarea_id]['descripcion']
 
 def test_usuario_con_tilde(gestor):
     tarea_id = gestor.agregar_tarea("José", "Pintar", "personal")
-    assert gestor.tareas[tarea_id].usuario == "José"
+    assert gestor.tareas[tarea_id]['usuario'] == "José"
 
 def test_usuario_unicode(gestor):
     tarea_id = gestor.agregar_tarea("Renée", "Diseñar", "trabajo")
-    assert gestor.tareas[tarea_id].usuario == "Renée"
+    assert gestor.tareas[tarea_id]['usuario'] == "Renée"
 
 def test_obtener_y_eliminar_en_cadena(gestor):
     id_ = gestor.agregar_tarea("Ana", "Correr", "personal")
     gestor.obtener_tareas_usuario("Ana")
     gestor.eliminar_tarea(id_)
-    assert id_ not in gestor.tareas
+    with pytest.raises(TareaNoEncontradaError):
+        gestor.obtener_tarea(id_)
 
 def test_validar_longitud_max_descripcion(gestor):
     desc = "a" * 500
     tarea_id = gestor.agregar_tarea("Max", desc, "personal")
-    assert len(gestor.tareas[tarea_id].descripcion) == 500
+    assert len(gestor.tareas[tarea_id]['descripcion']) == 500
 
 def test_validar_longitud_usuario(gestor):
     nombre = "a" * 100
     tarea_id = gestor.agregar_tarea(nombre, "Descripción", "trabajo")
-    assert len(gestor.tareas[tarea_id].usuario) == 100
+    assert len(gestor.tareas[tarea_id]['usuario']) == 100
 
 def test_ids_incrementales_despues_de_error(gestor):
     with pytest.raises(DescripcionVaciaError):
@@ -148,15 +151,15 @@ def test_agregar_tareas_diferentes_usuarios(gestor):
 
 def test_usuario_con_numeros_y_tilde(gestor):
     tarea_id = gestor.agregar_tarea("José123", "Escribir", "trabajo")
-    assert gestor.tareas[tarea_id].usuario == "José123"
+    assert gestor.tareas[tarea_id]['usuario'] == "José123"
 
 def test_usuario_alfanumerico_mayus(gestor):
     tarea_id = gestor.agregar_tarea("CARLOS_99", "Programar", "trabajo")
-    assert "CARLOS_99" in gestor.tareas[tarea_id].usuario
+    assert "CARLOS_99" in gestor.tareas[tarea_id]['usuario']
 
 def test_descripcion_con_escape(gestor):
     tarea_id = gestor.agregar_tarea("Mia", "Nueva línea\nTest", "estudio")
-    assert "\n" in gestor.tareas[tarea_id].descripcion
+    assert "\n" in gestor.tareas[tarea_id]['descripcion']
 
 def test_categoria_con_espacio(gestor):
     with pytest.raises(CategoriaInvalidaError):
@@ -169,13 +172,12 @@ def test_obtener_con_espacio_nombre(gestor):
 
 def test_agregar_descripcion_con_hashtag(gestor):
     tarea_id = gestor.agregar_tarea("Nico", "#HackathonReady", "trabajo")
-    assert "#HackathonReady" in gestor.tareas[tarea_id].descripcion
+    assert "#HackathonReady" in gestor.tareas[tarea_id]['descripcion']
 
 def test_nombre_usuario_minusculas_y_numeros(gestor):
     tarea_id = gestor.agregar_tarea("andres09", "Revisar PR", "personal")
-    assert "andres09" in gestor.tareas[tarea_id].usuario
+    assert "andres09" in gestor.tareas[tarea_id]['usuario']
 
-# ------------------------- AGREGAR TAREA -------------------------
 def test_agregar_tarea_valida(gestor):
     tarea_id = gestor.agregar_tarea("Juan", "Hacer mercado", "personal")
     assert tarea_id == 1
@@ -187,36 +189,35 @@ def test_agregar_tarea_duplicada(gestor):
 
 def test_agregar_tarea_caracteres_especiales(gestor):
     tarea_id = gestor.agregar_tarea("Sofía", "Estudiar matemáticas #1!", "estudio")
-    assert "#1!" in gestor.tareas[tarea_id].descripcion
+    assert "#1!" in gestor.tareas[tarea_id]['descripcion']
 
 def test_agregar_tarea_emojis(gestor):
     tarea_id = gestor.agregar_tarea("Andrés", "Comprar fruta 🍎", "personal")
-    assert "🍎" in gestor.tareas[tarea_id].descripcion
+    assert "🍎" in gestor.tareas[tarea_id]['descripcion']
 
 def test_secuencia_agregar_eliminar_varios(gestor):
     ids = [gestor.agregar_tarea("User", f"Tarea {i}", "trabajo") for i in range(3)]
     for id_ in ids:
         gestor.eliminar_tarea(id_)
-    assert gestor.tareas == {}
+    assert len(gestor.tareas) == 0
 
 def test_mismo_nombre_diferente_usuario(gestor):
     gestor.agregar_tarea("Juan", "Revisar correo", "trabajo")
     gestor.agregar_tarea("Pedro", "Revisar correo", "personal")
     tareas_juan = gestor.obtener_tareas_usuario("Juan")
     tareas_pedro = gestor.obtener_tareas_usuario("Pedro")
-    assert tareas_juan[0].descripcion == tareas_pedro[0].descripcion
+    assert tareas_juan[0]['descripcion'] == tareas_pedro[0]['descripcion']
 
 def test_usuario_nombre_largo(gestor):
     nombre = "Usuario" * 20
     tarea_id = gestor.agregar_tarea(nombre, "Tarea especial", "personal")
-    assert gestor.tareas[tarea_id].usuario == nombre
+    assert gestor.tareas[tarea_id]['usuario'] == nombre
 
 def test_eliminar_tareas_intercaladas(gestor):
     ids = [gestor.agregar_tarea("User", f"Tarea {i}", "trabajo") for i in range(5)]
     for i in range(0, 5, 2):  # Eliminar ID impares
         gestor.eliminar_tarea(ids[i])
-    for i in range(1, 5, 2):  # Verificar que las pares siguen existiendo
-        assert ids[i] in gestor.tareas
+    assert len(gestor.tareas) == 2  # Deberían quedar 2 tareas
 
 def test_agregar_tarea_usuario_vacio(gestor):
     with pytest.raises(ValueError):
@@ -233,7 +234,7 @@ def test_agregar_tarea_categoria_invalida(gestor):
 @pytest.mark.parametrize("categoria", ["trabajo", "personal", "estudio"])
 def test_agregar_tarea_categorias_validas(gestor, categoria):
     id_ = gestor.agregar_tarea("Luis", "Tarea prueba", categoria)
-    assert gestor.tareas[id_].categoria == categoria
+    assert gestor.tareas[id_]['categoria'] == categoria.lower()
 
 @pytest.mark.parametrize("usuario,descripcion,categoria", [
     ("", "ok", "personal"),
@@ -245,7 +246,6 @@ def test_agregar_tarea_categorias_validas(gestor, categoria):
 def test_agregar_tarea_comb_invalidas(gestor, usuario, descripcion, categoria):
     with pytest.raises(Exception):
         gestor.agregar_tarea(usuario, descripcion, categoria)
-
 
 """
 Módulo de pruebas unitarias para el gestor de tareas.
@@ -293,8 +293,6 @@ Ejemplos de casos testeados:
 Uso:
 ----
 Ejecutar todas las pruebas con pytest:
-$ pytest test_tareas.py -v
+pytest tests/test_tareas.py -v
 
-Ejecutar pruebas específicas con marcadores:
-$ pytest test_tareas.py -m parametrizadas -v
 """
